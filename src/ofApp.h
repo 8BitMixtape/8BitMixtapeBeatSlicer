@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxUI.h"
+#include "range_slider.h"
+
 #include "sample_window.h"
 
 class ofApp : public ofBaseApp{
@@ -46,4 +48,8 @@ class ofApp : public ofBaseApp{
         vector <float> rAudio;
 
         unsigned long t;
+
+        RangeSlider range1;
+        RangeSlider range2;
+
 };

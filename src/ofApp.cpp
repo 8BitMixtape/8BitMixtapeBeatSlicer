@@ -33,6 +33,10 @@ void ofApp::setup(){
 
     soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
     t = 0;
+
+    range1.setPosition(0,250);
+    range2.setPosition(400,250);
+
 }
 
 
@@ -74,6 +78,7 @@ void ofApp::draw(){
 
     //ofDrawBitmapString("8BitMixtapeSampleViewer 0.1", 50,50);
     sample_preview.draw(0,300, window_width);
+    range1.draw();
 }
 
 //--------------------------------------------------------------
