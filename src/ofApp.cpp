@@ -3,8 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(30);
-    ofEnableAlphaBlending();
-    ofEnableAntiAliasing();
+    //ofEnableAlphaBlending();
+    //ofEnableAntiAliasing();
 
     ofBackground(0,0,0);
 
@@ -47,7 +47,7 @@ void ofApp::guiEvent(ofxUIEventArgs &e)
 {
     sample_preview.setPot(pot1, pot2, pot3);
     sample_preview.setZoom(zoom);
-    sample_preview.update();
+   // sample_preview.update();
 }
 
 void ofApp::audioOut(float *output, int bufferSize, int nChannels)

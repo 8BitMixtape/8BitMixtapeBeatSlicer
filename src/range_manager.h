@@ -19,13 +19,13 @@ public:
 
     void draw()
     {
-        ofDrawBitmapString("Start", range1.position);
-        ofDrawBitmapString("Stop", range2.position);
+        ofDrawBitmapString("Start " + ofToString(range1.position.x), range1.position);
+        ofDrawBitmapString("Stop " + ofToString(range2.position.x), range2.position);
 
         ofPushStyle();
         ofSetColor(255,255,255,50);
         ofFill();
-        ofRect(range1.position.x + 10, range1.position.y, range2.position.x - range1.position.x, range1.height );
+        ofRect(range1.position.x, range1.position.y, range2.position.x - range1.position.x, range1.height );
         ofPopStyle();
     }
 

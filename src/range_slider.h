@@ -46,7 +46,7 @@ public:
         else ofSetHexColor(IDLE_COLOR);
 
         //ofLine(x,y);
-        ofRect(x+10, y, 2, height);
+        ofRect(x, y, 2, height);
 
         ofPopStyle();
     }
