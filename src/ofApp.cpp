@@ -3,6 +3,9 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(30);
+    ofEnableAlphaBlending();
+    ofEnableAntiAliasing();
+
     ofBackground(0,0,0);
 
     pot1 = 0;
@@ -34,8 +37,8 @@ void ofApp::setup(){
     soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
     t = 0;
 
-    range1.setPosition(0,250);
-    range2.setPosition(400,250);
+    paused = false;
+
 
 }
 
@@ -49,6 +52,7 @@ void ofApp::guiEvent(ofxUIEventArgs &e)
 
 void ofApp::audioOut(float *output, int bufferSize, int nChannels)
 {
+    if(paused) return;
     for (int i = 0; i < bufferSize; i++){
         t++;
         unsigned char snd = sample_preview.genSound(t>>2);
@@ -61,8 +65,9 @@ void ofApp::audioOut(float *output, int bufferSize, int nChannels)
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    sample_preview.update(t >> 2);
 
+    if(paused) return;
+    sample_preview.update(t >> 2);
 }
 
 //--------------------------------------------------------------
@@ -100,6 +105,7 @@ void ofApp::keyPressed(int key){
     if (key== '7') songs = 7;
     if (key== '8') songs = 8;
     if (key== '9') songs = 9;
+    if (key== ' ') {paused = !paused; return;};
 
     sample_preview.setFormula(songs);
 }

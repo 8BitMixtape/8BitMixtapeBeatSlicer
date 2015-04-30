@@ -5,3 +5,4 @@ addons.make
 src/sample_window.h
 src/sample_window.cpp
 src/range_slider.h
+src/range_manager.h

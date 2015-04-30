@@ -20,7 +20,7 @@ protected:
 public:
     void setup() {
 
-        setSize(20,200);
+        setSize(20,255);
 //        printf("MyTestObject::setup() - hello!\n");
         enableMouseEvents();
         enableKeyEvents();

@@ -2,8 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxUI.h"
-#include "range_slider.h"
 
+#include "range_manager.h"
 #include "sample_window.h"
 
 class ofApp : public ofBaseApp{
@@ -49,7 +49,8 @@ class ofApp : public ofBaseApp{
 
         unsigned long t;
 
-        RangeSlider range1;
-        RangeSlider range2;
+        RangeManager range1;
+
+        bool paused;
 
 };

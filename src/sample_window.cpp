@@ -46,7 +46,7 @@ void sample_window::update_formula_img(unsigned long t = 0)
 
             if (y < snd)
             {
-                formula_img.getPixelsRef()[arrpos_src] = 255;
+                formula_img.getPixelsRef()[arrpos_src] = 200;
             }else{
                 formula_img.getPixelsRef()[arrpos_src] = 0;
             }
@@ -142,7 +142,7 @@ void sample_window::setPot(unsigned int pot1, unsigned int pot2, unsigned int po
 
 void sample_window::draw(float x, float y, float w)
 {
-    formula_img.draw(x, y, ofGetWidth()*w,127);
+    formula_img.draw(x, y, ofGetWidth()*w,255);
 }
 
 
