@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxUI.h"
+#include "ofxOsc.h"
 
 #include "range_manager.h"
 #include "sample_window.h"
@@ -27,6 +28,7 @@ class ofApp : public ofBaseApp{
 
 
         ofxUISuperCanvas *gui0;
+        ofxOscReceiver receiver;
 
         int pot1, pot2, pot3, zoom;
 //        unsigned char zoom
@@ -48,9 +50,18 @@ class ofApp : public ofBaseApp{
         vector <float> rAudio;
 
         unsigned long t;
+        unsigned long loop_start;
+        unsigned long loop_t;
 
         RangeManager range1;
 
         bool paused;
+        bool loop;
+        bool loop_play;
 
+        int saveX;
+        int dragX;
+
+
+        void updateLoopStart();
 };

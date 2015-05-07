@@ -48,7 +48,7 @@ void sample_window::update_formula_img(unsigned long t = 0)
             {
                 formula_img.getPixelsRef()[arrpos_src] = 200;
             }else{
-                formula_img.getPixelsRef()[arrpos_src] = 0;
+                formula_img.getPixelsRef()[arrpos_src] = 25;
             }
 
         }

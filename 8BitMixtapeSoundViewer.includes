@@ -49,4 +49,5 @@
 ../../../addons/ofxUI/src
 ../../../addons/ofxPS3EyeGrabber/src
 ../../../addons/ofxMSAInteractiveObject/src
+../../../addons/ofxOsc/src
 src

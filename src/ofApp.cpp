@@ -1,12 +1,16 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup()
+{
     ofSetFrameRate(30);
     //ofEnableAlphaBlending();
     //ofEnableAntiAliasing();
 
     ofBackground(0,0,0);
+
+    receiver.setup(9090);
+
 
     pot1 = 0;
     pot2 = 0;
@@ -14,7 +18,7 @@ void ofApp::setup(){
 
     window_width = 0;
 
-    gui0 = new ofxUISuperCanvas("8BitMixtapeSampleViewer");
+    gui0 = new ofxUISuperCanvas("8BitMixtapeBeatSlicer");
 
     gui0->addIntSlider("pot1", 0, 255, &pot1);
     gui0->addIntSlider("pot2", 0, 255, &pot2);
@@ -37,8 +41,14 @@ void ofApp::setup(){
     soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
     t = 0;
 
-    paused = false;
+    loop_start = 0;
+    loop_t = 0;
+    loop = false;
+    loop_play = false;
 
+    paused = false;
+    saveX = 0;
+    dragX = 0;
 
 }
 
@@ -47,39 +57,90 @@ void ofApp::guiEvent(ofxUIEventArgs &e)
 {
     sample_preview.setPot(pot1, pot2, pot3);
     sample_preview.setZoom(zoom);
-   // sample_preview.update();
+    // sample_preview.update();
 }
 
 void ofApp::audioOut(float *output, int bufferSize, int nChannels)
 {
-    if(paused) return;
-    for (int i = 0; i < bufferSize; i++){
-        t++;
-        unsigned char snd = sample_preview.genSound(t>>2);
+    //if(paused) return;
+
+    unsigned long time_t;
+    unsigned char snd;
+
+    for (int i = 0; i < bufferSize; i++)
+        {
+
+            if (loop)
+                {
+
+                if(loop_play)
+                {
+
+                    if(loop_t > (loop_start+range1.getRangeMax(8000)))
+                        {
+                            loop_play = !loop_play;
+                            loop_t = loop_start + range1.getRangeMin(8000);
+                        }
+
+                    loop_t++;
+                    time_t = loop_t;
+
+                }
+                }else{
+                t++;
+                time_t = t;
+            }
 
 
-        lAudio[i] = output[i*nChannels    ] = (float) snd/255.0f * volume;
-        rAudio[i] = output[i*nChannels + 1] = (float) snd/255.0f * volume;
-    }
+            snd = sample_preview.genSound(time_t>>2);
+
+
+            lAudio[i] = output[i*nChannels    ] = (float) snd/255.0f * volume;
+            rAudio[i] = output[i*nChannels + 1] = (float) snd/255.0f * volume;
+        }
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update()
+{
+
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(&m);
+
+        // check for mouse moved message
+        if(m.getAddress() == "/seq"){
+            // both the arguments are int32's
+
+            pot1 = m.getArgAsInt32(0);
+            pot2 = m.getArgAsInt32(1);
+            sample_preview.setPot(pot1, pot2, pot3);
+
+            //mouseX = m.getArgAsInt32(0);
+            //mouseY = m.getArgAsInt32(1);
+            loop_play = !loop_play;
+        }
+
+    }
+
 
     if(paused) return;
     sample_preview.update(t >> 2);
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw()
+{
     ofBackground(0,0,0);
 
+    // ofDrawBitmapString("dragX: " + ofToString(dragX), 100,100);
 
-    //ofDrawBitmapString("time: " + ofToString(65525 - (t>>2)), 200,200);
+    ofDrawBitmapString("time: " + ofToString(t) + " loop_start:" + ofToString(loop_start) + " loop_t:" + ofToString(loop_t) + " loop_end:" + ofToString(loop_start + range1.getRangeMax(8000))  , 200,200);
 
-   // ofGetWidth()/8000.0f
+    // ofGetWidth()/8000.0f
 
-   // ofRect();
+    // ofRect();
 
     //ofDrawBitmapString("8BitMixtapeSampleViewer 0.1", 50,50);
     sample_preview.draw(0,300, window_width);
@@ -87,9 +148,35 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    if (key == 'f') {
-        ofToggleFullscreen();
+void ofApp::updateLoopStart()
+{
+    loop_start = t + range1.getRangeMin(8000);
+    loop_t = loop_start;
+}
+
+void ofApp::keyPressed(int key)
+{
+    if (key == 'f')
+        {
+            ofToggleFullscreen();
+            return;
+        }
+
+    if  (key == 'l')
+        {
+        loop = !loop;
+
+            if (loop)
+            {
+                updateLoopStart();
+                //paused = true;
+            }
+            return;
+        }
+
+    if (key == 'p')
+    {
+        loop_play = !loop_play;
         return;
     }
 
@@ -105,47 +192,82 @@ void ofApp::keyPressed(int key){
     if (key== '7') songs = 7;
     if (key== '8') songs = 8;
     if (key== '9') songs = 9;
-    if (key== ' ') {paused = !paused; return;};
+    if (key== ' ')
+        {
+            paused = !paused;
+            if (paused)
+            {
+                soundStream.stop();
+            }else{
+                soundStream.start();
+        }
+            return;
+        };
 
     sample_preview.setFormula(songs);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key)
+{
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y )
+{
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button)
+{
+
+    if (y > 555)
+        {
+            dragX = (saveX - x)*100;
+
+            sample_preview.update(t+(dragX));
+            //dragX = 0;
+        }
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button)
+{
+    if ( y > 555)
+        {
+            saveX = x;
+        }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button)
+{
+    // t += dragX;
+    if ( y > 555)
+        {
+            t = (t+dragX);
+            dragX = 0;
+        }
+
+    updateLoopStart();
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h)
+{
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::gotMessage(ofMessage msg)
+{
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo)
+{
 
 }

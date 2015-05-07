@@ -2,3 +2,4 @@ ofxGui
 ofxXmlSettings
 ofxUI
 ofxMSAInteractiveObject
+ofxOsc

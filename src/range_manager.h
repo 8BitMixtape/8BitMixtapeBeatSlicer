@@ -19,8 +19,8 @@ public:
 
     void draw()
     {
-        ofDrawBitmapString("Start " + ofToString(range1.position.x), range1.position);
-        ofDrawBitmapString("Stop " + ofToString(range2.position.x), range2.position);
+        ofDrawBitmapString("Start " + ofToString(this->getRangeMin(8000)), range1.position);
+        ofDrawBitmapString("Stop " +  ofToString(this->getRangeMax(8000)), range2.position);
 
         ofPushStyle();
         ofSetColor(255,255,255,50);
@@ -29,15 +29,15 @@ public:
         ofPopStyle();
     }
 
-    float getRangeMax()
+    float getRangeMax(float scale = 1.0f)
     {
-        return range2.position.x;
+        return (range2.position.x/ofGetWidth()) * scale ;
     }
 
 
-    float getRangeMin()
+    float getRangeMin(float scale = 1.0f)
     {
-        return range1.position.x;
+        return (range1.position.x/ofGetWidth()) * scale;
     }
 
 private:
